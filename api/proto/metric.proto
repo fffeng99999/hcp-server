@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package hcp.metric.v1;
+
+option go_package = "github.com/fffeng99999/hcp-server/api/generated/metric";
+
+import "api/proto/common.proto";
+
+service MetricService {
+  rpc ReportMetric(ReportMetricRequest) returns (ReportMetricResponse);
+  rpc GetNodeMetrics(GetNodeMetricsRequest) returns (GetNodeMetricsResponse);
+  rpc GetBenchmarkMetrics(GetBenchmarkMetricsRequest) returns (GetBenchmarkMetricsResponse);
+}
+
+message Metric {
+  string timestamp = 1;
+  string node_id = 2;
+  string metric_name = 3;
+  double metric_value = 4;
+  string metric_unit = 5;
+  string labels_json = 6; // Serialized JSON string for labels
+  string benchmark_id = 7;
+}
+
+message ReportMetricRequest {
+  string node_id = 1;
+  string metric_name = 2;
+  double metric_value = 3;
+  string metric_unit = 4;
+  string labels_json = 5;
+  string benchmark_id = 6;
+}
+
+message ReportMetricResponse {
+  bool success = 1;
+}
+
+message GetNodeMetricsRequest {
+  string node_id = 1;
+  string metric_name = 2; // Optional filter
+  string start_time = 3;
+  string end_time = 4;
+  hcp.common.v1.PaginationRequest pagination = 5;
+}
+
+message GetNodeMetricsResponse {
+  repeated Metric metrics = 1;
+  hcp.common.v1.PaginationResponse pagination = 2;
+}
+
+message GetBenchmarkMetricsRequest {
+  string benchmark_id = 1;
+  string metric_name = 2; // Optional filter
+  hcp.common.v1.PaginationRequest pagination = 3;
+}
+
+message GetBenchmarkMetricsResponse {
+  repeated Metric metrics = 1;
+  hcp.common.v1.PaginationResponse pagination = 2;
+}

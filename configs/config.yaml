@@ -1,0 +1,19 @@
+server:
+  port: 8081
+  mode: development
+
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: password
+  dbname: hcp_server
+  sslmode: disable
+
+redis:
+  addr: localhost:6379
+  password: ""
+  db: 0
+
+log:
+  level: debug

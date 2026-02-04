@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package hcp.common.v1;
+
+option go_package = "github.com/fffeng99999/hcp-server/api/generated/common";
+
+message PaginationRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message PaginationResponse {
+  int32 total_items = 1;
+  int32 total_pages = 2;
+  int32 current_page = 3;
+}
+
+message StatusResponse {
+  bool success = 1;
+  string message = 2;
+}

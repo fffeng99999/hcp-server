@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package hcp.benchmark.v1;
+
+option go_package = "github.com/fffeng99999/hcp-server/api/generated/benchmark";
+
+import "api/proto/common.proto";
+
+service BenchmarkService {
+  rpc CreateBenchmark(CreateBenchmarkRequest) returns (CreateBenchmarkResponse);
+  rpc GetBenchmark(GetBenchmarkRequest) returns (GetBenchmarkResponse);
+  rpc ListBenchmarks(ListBenchmarksRequest) returns (ListBenchmarksResponse);
+  rpc UpdateBenchmark(UpdateBenchmarkRequest) returns (UpdateBenchmarkResponse);
+  rpc DeleteBenchmark(DeleteBenchmarkRequest) returns (hcp.common.v1.StatusResponse);
+}
+
+message Benchmark {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string algorithm = 4;
+  int32 node_count = 5;
+  int32 duration = 6;
+  int32 target_tps = 7;
+  string status = 8;
+  
+  double actual_tps = 9;
+  double latency_avg = 10;
+  
+  string created_at = 20;
+  string updated_at = 21;
+}
+
+message CreateBenchmarkRequest {
+  string name = 1;
+  string description = 2;
+  string algorithm = 3;
+  int32 node_count = 4;
+  int32 duration = 5;
+  int32 target_tps = 6;
+}
+
+message CreateBenchmarkResponse {
+  Benchmark benchmark = 1;
+}
+
+message GetBenchmarkRequest {
+  string id = 1;
+}
+
+message GetBenchmarkResponse {
+  Benchmark benchmark = 1;
+}
+
+message ListBenchmarksRequest {
+  hcp.common.v1.PaginationRequest pagination = 1;
+}
+
+message ListBenchmarksResponse {
+  repeated Benchmark benchmarks = 1;
+  hcp.common.v1.PaginationResponse pagination = 2;
+}
+
+message UpdateBenchmarkRequest {
+  string id = 1;
+  string status = 2;
+}
+
+message UpdateBenchmarkResponse {
+  Benchmark benchmark = 1;
+}
+
+message DeleteBenchmarkRequest {
+  string id = 1;
+}

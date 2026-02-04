@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package hcp.transaction.v1;
+
+option go_package = "github.com/fffeng99999/hcp-server/api/generated/transaction";
+
+import "api/proto/common.proto";
+
+service TransactionService {
+  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
+  rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+  rpc GetTransactionStats(GetTransactionStatsRequest) returns (GetTransactionStatsResponse);
+}
+
+message Transaction {
+  string hash = 1;
+  string from_address = 2;
+  string to_address = 3;
+  int64 amount = 4;
+  int64 gas_price = 5;
+  int64 gas_limit = 6;
+  int64 gas_used = 7;
+  int64 nonce = 8;
+  int64 block_number = 9;
+  string block_hash = 10;
+  int32 transaction_index = 11;
+  string status = 12;
+  string error_message = 13;
+  string submitted_at = 14;
+  string confirmed_at = 15;
+  double latency_ms = 16;
+  string benchmark_id = 17;
+}
+
+message CreateTransactionRequest {
+  string from_address = 1;
+  string to_address = 2;
+  int64 amount = 3;
+  string benchmark_id = 4;
+}
+
+message CreateTransactionResponse {
+  Transaction transaction = 1;
+}
+
+message GetTransactionRequest {
+  string hash = 1;
+}
+
+message GetTransactionResponse {
+  Transaction transaction = 1;
+}
+
+message ListTransactionsRequest {
+  string benchmark_id = 1;
+  string from_address = 2;
+  string to_address = 3;
+  string status = 4;
+  hcp.common.v1.PaginationRequest pagination = 5;
+}
+
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+  hcp.common.v1.PaginationResponse pagination = 2;
+}
+
+message GetTransactionStatsRequest {
+  string benchmark_id = 1;
+}
+
+message GetTransactionStatsResponse {
+  int64 total_transactions = 1;
+  int64 pending_count = 2;
+  int64 confirmed_count = 3;
+  int64 failed_count = 4;
+  double avg_latency_ms = 5;
+  double tps = 6;
+}

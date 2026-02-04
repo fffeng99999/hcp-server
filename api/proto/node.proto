@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package hcp.node.v1;
+
+option go_package = "github.com/fffeng99999/hcp-server/api/generated/node";
+
+import "api/proto/common.proto";
+
+service NodeService {
+  rpc RegisterNode(RegisterNodeRequest) returns (RegisterNodeResponse);
+  rpc GetNode(GetNodeRequest) returns (GetNodeResponse);
+  rpc UpdateNodeStatus(UpdateNodeStatusRequest) returns (UpdateNodeStatusResponse);
+  rpc ListNodes(ListNodesRequest) returns (ListNodesResponse);
+  rpc GetNetworkTopology(GetNetworkTopologyRequest) returns (GetNetworkTopologyResponse);
+}
+
+message Node {
+  string id = 1;
+  string name = 2;
+  string address = 3;
+  string public_key = 4;
+  string region = 5;
+  string role = 6;
+  string status = 7;
+  double trust_score = 8;
+  double uptime_percentage = 9;
+  int32 total_blocks_proposed = 10;
+  int32 total_blocks_validated = 11;
+  double cpu_usage = 12;
+  double memory_usage = 13;
+  double disk_usage = 14;
+  int32 peers_count = 15;
+  double network_latency_avg = 16;
+  string last_heartbeat = 17;
+  string registered_at = 18;
+  string updated_at = 19;
+}
+
+message RegisterNodeRequest {
+  string name = 1;
+  string address = 2;
+  string public_key = 3;
+  string region = 4;
+  string role = 5;
+}
+
+message RegisterNodeResponse {
+  Node node = 1;
+}
+
+message GetNodeRequest {
+  string id = 1;
+}
+
+message GetNodeResponse {
+  Node node = 1;
+}
+
+message UpdateNodeStatusRequest {
+  string id = 1;
+  string status = 2;
+  double cpu_usage = 3;
+  double memory_usage = 4;
+  double disk_usage = 5;
+  int32 peers_count = 6;
+}
+
+message UpdateNodeStatusResponse {
+  Node node = 1;
+}
+
+message ListNodesRequest {
+  string role = 1;
+  string status = 2;
+  string region = 3;
+  hcp.common.v1.PaginationRequest pagination = 4;
+}
+
+message ListNodesResponse {
+  repeated Node nodes = 1;
+  hcp.common.v1.PaginationResponse pagination = 2;
+}
+
+message GetNetworkTopologyRequest {
+}
+
+message GetNetworkTopologyResponse {
+  repeated Node nodes = 1;
+  // Can add links/connections here if needed
+}
