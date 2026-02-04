@@ -1,0 +1,18 @@
+# Binaries
+server
+hcp-server
+bin/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# OS specific
+.DS_Store
+Thumbs.db
