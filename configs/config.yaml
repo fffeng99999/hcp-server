@@ -3,16 +3,16 @@ server:
   mode: development
 
 database:
-  host: localhost
+  host: 192.168.58.102
   port: 5432
-  user: postgres
-  password: password
+  user: user_rbc3B8
+  password: password_DfA4Pw
   dbname: hcp_server
   sslmode: disable
 
 redis:
-  addr: localhost:6379
-  password: ""
+  addr: 192.168.58.102:6379
+  password: redis_ttEreS
   db: 0
 
 log:
