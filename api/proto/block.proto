@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package hcp.block.v1;
+
+option go_package = "github.com/fffeng99999/hcp-server/api/generated/block";
+
+import "api/proto/common.proto";
+
+service BlockService {
+  rpc GetBlock(GetBlockRequest) returns (GetBlockResponse);
+  rpc ListBlocks(ListBlocksRequest) returns (ListBlocksResponse);
+}
+
+message Block {
+  int64 height = 1;
+  string hash = 2;
+  string parent_hash = 3;
+  string proposer_address = 4;
+  int64 timestamp = 5;
+  int32 tx_count = 6;
+  int64 size_bytes = 7;
+}
+
+message GetBlockRequest {
+  int64 height = 1;
+}
+
+message GetBlockResponse {
+  Block block = 1;
+}
+
+message ListBlocksRequest {
+  hcp.common.v1.PaginationRequest pagination = 1;
+}
+
+message ListBlocksResponse {
+  repeated Block blocks = 1;
+  hcp.common.v1.PaginationResponse pagination = 2;
+}
