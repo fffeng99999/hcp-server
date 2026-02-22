@@ -81,17 +81,17 @@ func (h *BenchmarkHandler) ListBenchmarks(ctx context.Context, req *pb.ListBench
 }
 
 func (h *BenchmarkHandler) UpdateBenchmark(ctx context.Context, req *pb.UpdateBenchmarkRequest) (*pb.UpdateBenchmarkResponse, error) {
-	// Not implemented for skeleton
+	// 暂未实现更新逻辑，仅返回空结果占位
 	return &pb.UpdateBenchmarkResponse{}, nil
 }
 
 func (h *BenchmarkHandler) DeleteBenchmark(ctx context.Context, req *pb.DeleteBenchmarkRequest) (*common.StatusResponse, error) {
-	// Not implemented for skeleton
+	// 暂未实现真实删除逻辑，当前仅返回成功占位
 	return &common.StatusResponse{Success: true}, nil
 }
 
 
-// Helper
+// 工具函数：将内部 Benchmark 模型转换为 gRPC 协议定义
 func mapModelToProto(m *models.Benchmark) *pb.Benchmark {
 	return &pb.Benchmark{
 		Id:          m.ID.String(),

@@ -12,7 +12,7 @@ type NodeService interface {
 	Get(ctx context.Context, id string) (*models.Node, error)
 	List(ctx context.Context, filter repository.NodeFilter, page, pageSize int) ([]models.Node, int64, error)
 	UpdateStatus(ctx context.Context, id, status string) error
-	// UpdateMetrics(ctx context.Context, id string, metrics ...) error // Can be expanded
+	// UpdateMetrics(ctx context.Context, id string, metrics ...) error // 预留接口：后续可扩展节点指标更新
 }
 
 type nodeService struct {
@@ -24,13 +24,12 @@ func NewNodeService(repo repository.NodeRepository) NodeService {
 }
 
 func (s *nodeService) Register(ctx context.Context, node *models.Node) (*models.Node, error) {
-	// Check if node exists, if so update it, else create
+	// 若节点已存在则更新信息，否则创建新节点
 	existing, err := s.repo.GetByID(ctx, node.ID)
 	if err == nil && existing != nil {
-		// Update existing
-		// Logic to update fields if necessary
-		// For now, let's assume registration might update info
-		node.RegisteredAt = existing.RegisteredAt // Preserve creation time
+		// 更新已有节点记录
+		// 如需更精细字段控制，可在此处补充业务逻辑
+		node.RegisteredAt = existing.RegisteredAt // 保留原始注册时间
 		if err := s.repo.Update(ctx, node); err != nil {
 			return nil, err
 		}

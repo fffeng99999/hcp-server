@@ -22,16 +22,16 @@ func NewTransactionHandler(svc service.TransactionService) *TransactionHandler {
 }
 
 func (h *TransactionHandler) CreateTransaction(ctx context.Context, req *pb.CreateTransactionRequest) (*pb.CreateTransactionResponse, error) {
-	// Validate benchmark ID
+	// 校验基准测试 ID 的合法性
 	benchmarkID, err := uuid.Parse(req.BenchmarkId)
 	if err != nil {
-		// Assuming validation logic or default handling. For now strict.
-		// In a real scenario, we might return an invalid argument error.
+		// 当前采用严格模式：解析失败直接返回错误
+		// 真实场景下建议返回 InvalidArgument 类型的 gRPC 错误
 		return nil, err
 	}
 
 	tx := &models.Transaction{
-		Hash:        uuid.New().String(), // Generate a hash if not provided (mock) or use real hash logic
+		Hash:        uuid.New().String(), // 目前使用随机 UUID 作为哈希；生产环境应替换为真实哈希
 		FromAddress: req.FromAddress,
 		ToAddress:   req.ToAddress,
 		Amount:      req.Amount,
@@ -56,7 +56,7 @@ func (h *TransactionHandler) GetTransaction(ctx context.Context, req *pb.GetTran
 		return nil, err
 	}
 	if tx == nil {
-		return nil, nil // Or return NotFound error
+		return nil, nil // 当前返回空结果；后续可改为返回 NotFound 错误
 	}
 	return &pb.GetTransactionResponse{
 		Transaction: mapTransactionToProto(tx),
@@ -108,10 +108,9 @@ func (h *TransactionHandler) GetTransactionStats(ctx context.Context, req *pb.Ge
 		return nil, err
 	}
 
-	// Calculate TPS (simplified)
+	// 计算 TPS（当前为简化占位实现）
 	tps := 0.0
-	// Ideally TPS is calculated over a time window. Here we might just return 0 or calculate if we had duration.
-	// For now, let's just pass what we have.
+	// 理想情况下应基于时间窗口统计；目前仅返回占位值
 
 	return &pb.GetTransactionStatsResponse{
 		TotalTransactions: stats.TotalTransactions,

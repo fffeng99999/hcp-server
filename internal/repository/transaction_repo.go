@@ -72,13 +72,11 @@ func (r *transactionRepository) GetStats(ctx context.Context, benchmarkID string
 		AvgLatencyMs float64
 	}
 
-	// This is a simplified aggregation. In production, this might need optimization or raw SQL.
-	// Assuming latency_ms is populated only for confirmed transactions or valid ones.
-	
-	// Count totals by status
-	// We can do this in one query using FILTER or CASE WHEN (Postgres)
-	// Or multiple queries. For simplicity and GORM compatibility:
-	
+	// 这是一个简化版的聚合查询，生产环境中可以考虑手写 SQL 或做性能优化
+	// 假设 latency_ms 仅对已确认或有效交易进行了填充
+	// 统计不同状态下的交易数量：
+	// - 可以通过 PostgreSQL 的 FILTER / CASE WHEN 在单条 SQL 中完成
+	// - 也可以拆成多条查询，这里为兼容性与简洁性采用单条原生 SQL
 	err := r.db.WithContext(ctx).Raw(`
 		SELECT 
 			COUNT(*) as total,

@@ -15,7 +15,7 @@ func NewRedisClient(cfg config.RedisConfig) (*redis.Client, error) {
 		DB:       cfg.DB,
 	})
 
-	// Ping to verify connection
+	// 通过 Ping 命令验证与 Redis 的连接是否正常
 	ctx := context.Background()
 	if err := rdb.Ping(ctx).Err(); err != nil {
 		return nil, fmt.Errorf("failed to connect to redis: %w", err)

@@ -22,7 +22,7 @@ func NewNodeHandler(svc service.NodeService) *NodeHandler {
 
 func (h *NodeHandler) RegisterNode(ctx context.Context, req *pb.RegisterNodeRequest) (*pb.RegisterNodeResponse, error) {
 	node := &models.Node{
-		ID:        req.Address, // Use address as ID or generate new UUID? Assuming address is unique ID for now.
+		ID:        req.Address, // 以地址作为 ID；如需独立 ID 可改为生成 UUID
 		Name:      req.Name,
 		Address:   req.Address,
 		PublicKey: req.PublicKey,
@@ -32,7 +32,7 @@ func (h *NodeHandler) RegisterNode(ctx context.Context, req *pb.RegisterNodeRequ
 		RegisteredAt: time.Now(),
 		UpdatedAt:    time.Now(),
 	}
-	// If ID is not address, generate one. But typically p2p nodes have IDs.
+	// 如果未能从请求中获取到 ID，则回退使用地址字段作为 ID
 	if node.ID == "" {
 		node.ID = req.Address // Fallback
 	}
@@ -61,17 +61,13 @@ func (h *NodeHandler) GetNode(ctx context.Context, req *pb.GetNodeRequest) (*pb.
 }
 
 func (h *NodeHandler) UpdateNodeStatus(ctx context.Context, req *pb.UpdateNodeStatusRequest) (*pb.UpdateNodeStatusResponse, error) {
-	// This might need more robust update logic in service, passing struct instead of just status
-	// But service interface has UpdateStatus(id, status).
-	// To update metrics, we might need another method.
-	
-	// For now, just update status.
+	// 当前仅更新节点状态；如需更新更多字段可扩展 service 接口
 	err := h.svc.UpdateStatus(ctx, req.Id, req.Status)
 	if err != nil {
 		return nil, err
 	}
 	
-	// Fetch updated node
+	// 再次查询最新的节点信息并返回
 	node, err := h.svc.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -121,7 +117,7 @@ func (h *NodeHandler) ListNodes(ctx context.Context, req *pb.ListNodesRequest) (
 }
 
 func (h *NodeHandler) GetNetworkTopology(ctx context.Context, req *pb.GetNetworkTopologyRequest) (*pb.GetNetworkTopologyResponse, error) {
-	// Just return all nodes for now
+	// 目前简单地返回所有节点，未来可根据拓扑关系进行扩展
 	nodes, _, err := h.svc.List(ctx, repository.NodeFilter{}, 1, 1000)
 	if err != nil {
 		return nil, err

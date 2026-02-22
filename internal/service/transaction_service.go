@@ -23,7 +23,7 @@ func NewTransactionService(repo repository.TransactionRepository) TransactionSer
 }
 
 func (s *transactionService) Create(ctx context.Context, tx *models.Transaction) (*models.Transaction, error) {
-	// Add business logic here if needed (e.g. validation, event publishing)
+	// 如有需要，可在此处加入业务逻辑（例如参数校验、事件发布等）
 	if err := s.repo.Create(ctx, tx); err != nil {
 		return nil, err
 	}

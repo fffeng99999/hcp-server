@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockRepository is a mock implementation of repository.BenchmarkRepository
+// MockBenchmarkRepository 为 repository.BenchmarkRepository 的模拟实现，用于单元测试
 type MockBenchmarkRepository struct {
 	mock.Mock
 }
@@ -55,13 +55,13 @@ func TestBenchmarkService_Create(t *testing.T) {
 		NodeCount: 4,
 	}
 
-	// Expectation
+	// 期望：调用 Create 时返回 nil 错误
 	mockRepo.On("Create", ctx, benchmark).Return(nil)
 
-	// Action
+	// 行为：调用服务层的 Create 方法
 	created, err := svc.Create(ctx, benchmark)
 
-	// Assertion
+	// 断言：不应返回错误，且创建结果非空
 	assert.NoError(t, err)
 	assert.NotNil(t, created)
 	assert.Equal(t, "Test Benchmark", created.Name)
@@ -79,13 +79,13 @@ func TestBenchmarkService_Get(t *testing.T) {
 		Name: "Test Benchmark",
 	}
 
-	// Expectation
+	// 期望：GetByID 返回预期的基准测试对象
 	mockRepo.On("GetByID", ctx, id).Return(expectedBenchmark, nil)
 
-	// Action
+	// 行为：调用服务层的 Get 方法
 	result, err := svc.Get(ctx, id)
 
-	// Assertion
+	// 断言：返回值与预期对象相同
 	assert.NoError(t, err)
 	assert.Equal(t, expectedBenchmark, result)
 	mockRepo.AssertExpectations(t)
@@ -98,13 +98,13 @@ func TestBenchmarkService_Get_NotFound(t *testing.T) {
 	ctx := context.Background()
 	id := uuid.New().String()
 
-	// Expectation
+	// 期望：当仓储层返回 not found 错误时，服务层也返回错误
 	mockRepo.On("GetByID", ctx, id).Return(nil, errors.New("not found"))
 
-	// Action
+	// 行为：调用服务层的 Get 方法
 	result, err := svc.Get(ctx, id)
 
-	// Assertion
+	// 断言：应返回错误且结果为空
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	mockRepo.AssertExpectations(t)
