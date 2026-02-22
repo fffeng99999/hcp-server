@@ -13,6 +13,7 @@ fi
 
 # Ensure output directories exist
 mkdir -p api/generated/common
+mkdir -p api/generated/auth
 mkdir -p api/generated/benchmark
 mkdir -p api/generated/transaction
 mkdir -p api/generated/node

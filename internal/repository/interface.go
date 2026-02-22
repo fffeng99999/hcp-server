@@ -57,3 +57,9 @@ type MetricRepository interface {
 	GetNodeMetrics(ctx context.Context, nodeID, metricName string, startTime, endTime time.Time, page, pageSize int) ([]models.Metric, int64, error)
 	GetBenchmarkMetrics(ctx context.Context, benchmarkID, metricName string, page, pageSize int) ([]models.Metric, int64, error)
 }
+
+type UserRepository interface {
+	Create(ctx context.Context, user *models.User) error
+	GetByUsername(ctx context.Context, username string) (*models.User, error)
+	Update(ctx context.Context, user *models.User) error
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"net"
@@ -8,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	pb_auth "github.com/fffeng99999/hcp-server/api/generated/auth"
 	pb_benchmark "github.com/fffeng99999/hcp-server/api/generated/benchmark"
 	pb_metric "github.com/fffeng99999/hcp-server/api/generated/metric"
 	pb_node "github.com/fffeng99999/hcp-server/api/generated/node"
@@ -67,6 +69,7 @@ func main() {
 			&models.Node{},
 			&models.Metric{},
 			&models.Anomaly{},
+			&models.User{},
 		)
 		if err != nil {
 			utils.Logger.Fatal("Migration failed", zap.Error(err))
@@ -75,17 +78,44 @@ func main() {
 		return
 	}
 
+	if err := db.AutoMigrate(&models.User{}); err != nil {
+		utils.Logger.Fatal("User migration failed", zap.Error(err))
+	}
+
 	// 5. Init Repositories
 	benchmarkRepo := repository.NewBenchmarkRepository(db)
 	transactionRepo := repository.NewTransactionRepository(db)
 	nodeRepo := repository.NewNodeRepository(db)
 	metricRepo := repository.NewMetricRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
 	// 6. Init Services
 	benchmarkService := service.NewBenchmarkService(benchmarkRepo)
 	transactionService := service.NewTransactionService(transactionRepo)
 	nodeService := service.NewNodeService(nodeRepo)
 	metricService := service.NewMetricService(metricRepo)
+	authService := service.NewAuthService(userRepo)
+
+	ctx := context.Background()
+	existingAdmin, err := userRepo.GetByUsername(ctx, "admin")
+	if err != nil {
+		utils.Logger.Fatal("Failed to check admin user", zap.Error(err))
+	}
+	if existingAdmin == nil {
+		admin := &models.User{
+			Username: "admin",
+			Email:    "admin@hcp.com",
+			Role:     "admin",
+			Status:   "active",
+		}
+		if err := admin.SetPassword("admin123"); err != nil {
+			utils.Logger.Fatal("Failed to set admin password", zap.Error(err))
+		}
+		if err := userRepo.Create(ctx, admin); err != nil {
+			utils.Logger.Fatal("Failed to create admin user", zap.Error(err))
+		}
+		utils.Logger.Info("Default admin user created")
+	}
 
 	// 7. Init gRPC Server
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Server.Port))
@@ -107,6 +137,9 @@ func main() {
 
 	metricHandler := handlers.NewMetricHandler(metricService)
 	pb_metric.RegisterMetricServiceServer(s, metricHandler)
+
+	authHandler := handlers.NewAuthHandler(authService)
+	pb_auth.RegisterAuthServiceServer(s, authHandler)
 
 	// 8. Start Server
 	utils.Logger.Info("Server listening", zap.Int("port", cfg.Server.Port))
